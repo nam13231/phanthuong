@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Mục Tiêu Học Tập</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-image: url('93967fc0-36e8-4be8-9f5b-f89e57a97da6.png');
+      background-size: cover;
+      background-position: center;
+      color: #fff;
+      text-align: center;
+    }
+    .container {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 20px;
+      max-width: 700px;
+      margin: 40px auto;
+      border-radius: 15px;
+    }
+    img {
+      width: 100%;
+      border-radius: 15px;
+    }
+    button {
+      margin: 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background-color: #4caf50;
+      color: white;
+    }
+    #progress {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎯 Mục tiêu học tập mỗi ngày</h1>
+    <img src="Xiaomi-Mi-11-Ultra.jpg" alt="Phần thưởng">
+    <p id="progress">Điểm hiện tại: 0 / 3120</p>
+    <div id="daily-buttons">
+      <button onclick="diemDanh()">Điểm danh hôm nay (+10)</button><br>
+      <button onclick="congDiem('toan', 10)">Học Toán (+10)</button>
+      <button onclick="congDiem('ly', 10)">Học Lý (+10)</button>
+      <button onclick="congDiem('hoa', 10)">Học Hóa (+10)</button>
+      <button onclick="congDiem('anh', 10)">Học Tiếng Anh (+10)</button><br>
+      <button onclick="congDiem('on', 30)">Ôn tập kiến thức (+30)</button>
+    </div>
+    <div style="margin-top: 20px;">
+      <label>⏰ Đặt giờ nhắc học: <input type="time" id="reminderTime"> <button onclick="setReminder()">Lưu</button></label>
+    </div>
+  </div>
+
+  <script>
+    const TOTAL_DAYS = 312;
+    const TOTAL_SCORE = TOTAL_DAYS * 100; // điểm tối đa nếu hoàn thành đầy đủ mỗi ngày
+    let diem = parseInt(localStorage.getItem("diem")) || 0;
+    let today = new Date().toISOString().split('T')[0];
+    let done = JSON.parse(localStorage.getItem("done")) || {};
+    let reminderTime = localStorage.getItem("reminderTime") || "";
+
+    // Auto trừ điểm nếu hôm trước chưa làm đủ
+    let lastCheck = localStorage.getItem("lastCheck") || "";
+    if (lastCheck && lastCheck !== today) {
+      const missed = JSON.parse(localStorage.getItem("done"))[lastCheck];
+      if (missed) {
+        const tasks = ['on', 'toan', 'ly', 'hoa', 'anh', 'diemdanh'];
+        tasks.forEach(task => {
+          if (!missed[task]) {
+            const minus = (task === 'on') ? 30 : 10;
+            diem -= minus;
+          }
+        });
+        diem = Math.max(0, diem);
+        localStorage.setItem("diem", diem);
+      }
+    }
+    localStorage.setItem("lastCheck", today);
+
+    function updateProgress() {
+      document.getElementById("progress").innerText = `Điểm hiện tại: ${diem} / ${TOTAL_SCORE}`;
+      if (diem >= TOTAL_SCORE) alert("🎉 Chúc mừng bạn đã hoàn thành mục tiêu và giành được Xiaomi Mi 11 Ultra!");
+    }
+
+    function congDiem(task, amount) {
+      let doneToday = done[today] || {};
+      if (doneToday[task]) return alert("Bạn đã hoàn thành nhiệm vụ này hôm nay!");
+      diem += amount;
+      doneToday[task] = true;
+      done[today] = doneToday;
+      localStorage.setItem("diem", diem);
+      localStorage.setItem("done", JSON.stringify(done));
+      updateProgress();
+    }
+
+    function diemDanh() {
+      congDiem("diemdanh", 10);
+    }
+
+    function setReminder() {
+      const time = document.getElementById("reminderTime").value;
+      if (!time) return alert("Hãy chọn giờ trước!");
+      localStorage.setItem("reminderTime", time);
+      alert("Đã lưu giờ nhắc học lúc " + time);
+    }
+
+    // Notification reminder
+    function startReminderCheck() {
+      if (!("Notification" in window)) return;
+      Notification.requestPermission();
+      setInterval(() => {
+        const t = localStorage.getItem("reminderTime");
+        if (!t) return;
+        const now = new Date();
+        const nowStr = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
+        if (nowStr === t) {
+          new Notification("⏰ Đến giờ học rồi! Hãy hoàn thành mục tiêu hôm nay nhé.");
+        }
+      }, 60000); // kiểm tra mỗi phút
+    }
+
+    updateProgress();
+    startReminderCheck();
+  </script>
+</body>
+</html>
