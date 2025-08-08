@@ -16,7 +16,7 @@
     .container {
       background: rgba(0, 0, 0, 0.6);
       padding: 20px;
-      max-width: 700px;
+      max-width: 900px;
       margin: 40px auto;
       border-radius: 15px;
     }
@@ -38,6 +38,30 @@
       margin-top: 20px;
       font-size: 18px;
     }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: #ffffff10;
+      overflow-x: auto;
+    }
+    th, td {
+      border: 1px solid #ffffff30;
+      padding: 8px;
+      color: #fff;
+    }
+    input[type="time"], textarea {
+      padding: 6px;
+      border-radius: 6px;
+      border: none;
+    }
+    #dailyQuote {
+      font-size: 18px;
+      margin-top: 20px;
+      padding: 10px;
+      background: #ffffff20;
+      border-radius: 10px;
+    }
   </style>
 </head>
 <body>
@@ -45,6 +69,9 @@
     <h1>🎯 Mục tiêu học tập mỗi ngày</h1>
     <img src="Xiaomi-Mi-11-Ultra.jpg" alt="Phần thưởng">
     <p id="progress">Điểm hiện tại: 0 / 3120</p>
+
+    <div id="dailyQuote"></div>
+
     <div id="daily-buttons">
       <button onclick="diemDanh()">Điểm danh hôm nay (+10)</button><br>
       <button onclick="congDiem('toan', 10)">Học Toán (+10)</button>
@@ -53,30 +80,60 @@
       <button onclick="congDiem('anh', 10)">Học Tiếng Anh (+10)</button><br>
       <button onclick="congDiem('on', 30)">Ôn tập kiến thức (+30)</button>
     </div>
+
     <div style="margin-top: 20px;">
       <label>⏰ Đặt giờ nhắc học: <input type="time" id="reminderTime"> <button onclick="setReminder()">Lưu</button></label>
+    </div>
+
+    <div style="margin-top: 15px;">
+      <button style="background-color:#f44336" onclick="xoaLichHomNay()">🗑️ Xóa dữ liệu hôm nay</button>
+      <button style="background-color:#e91e63" onclick="xoaGhiChuHomNay()">🗒️ Xóa ghi chú hôm nay</button>
+    </div>
+
+    <div style="margin-top: 30px;">
+      <h2>🗓️ Lịch học & Ghi chú</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Ngày</th>
+            <th>Nhiệm vụ</th>
+            <th>Ghi chú</th>
+          </tr>
+        </thead>
+        <tbody id="calendarBody"></tbody>
+      </table>
     </div>
   </div>
 
   <script>
     const TOTAL_DAYS = 312;
-    const TOTAL_SCORE = TOTAL_DAYS * 100; // điểm tối đa nếu hoàn thành đầy đủ mỗi ngày
+    const TOTAL_SCORE = TOTAL_DAYS * 100;
     let diem = parseInt(localStorage.getItem("diem")) || 0;
     let today = new Date().toISOString().split('T')[0];
     let done = JSON.parse(localStorage.getItem("done")) || {};
+    let notes = JSON.parse(localStorage.getItem("notes")) || {};
     let reminderTime = localStorage.getItem("reminderTime") || "";
-
-    // Auto trừ điểm nếu hôm trước chưa làm đủ
     let lastCheck = localStorage.getItem("lastCheck") || "";
+
+    const quotes = [
+      "📚 Hôm nay bạn học gì rồi? Cố gắng lên nhé!",
+      "🚀 Mỗi ngày một bước, bạn sẽ tiến xa!",
+      "💡 Học hôm nay - Thành công ngày mai!",
+      "🔥 Đừng để ngày hôm nay trôi qua vô ích!",
+      "🌱 Tri thức là sức mạnh, cố lên bạn nhé!"
+    ];
+
+    function showDailyQuote() {
+      const index = new Date().getDate() % quotes.length;
+      document.getElementById("dailyQuote").innerText = quotes[index];
+    }
+
     if (lastCheck && lastCheck !== today) {
-      const missed = JSON.parse(localStorage.getItem("done"))[lastCheck];
+      const missed = done[lastCheck];
       if (missed) {
         const tasks = ['on', 'toan', 'ly', 'hoa', 'anh', 'diemdanh'];
         tasks.forEach(task => {
-          if (!missed[task]) {
-            const minus = (task === 'on') ? 30 : 10;
-            diem -= minus;
-          }
+          if (!missed[task]) diem -= task === 'on' ? 30 : 10;
         });
         diem = Math.max(0, diem);
         localStorage.setItem("diem", diem);
@@ -98,6 +155,7 @@
       localStorage.setItem("diem", diem);
       localStorage.setItem("done", JSON.stringify(done));
       updateProgress();
+      renderCalendar();
     }
 
     function diemDanh() {
@@ -111,7 +169,6 @@
       alert("Đã lưu giờ nhắc học lúc " + time);
     }
 
-    // Notification reminder
     function startReminderCheck() {
       if (!("Notification" in window)) return;
       Notification.requestPermission();
@@ -123,10 +180,62 @@
         if (nowStr === t) {
           new Notification("⏰ Đến giờ học rồi! Hãy hoàn thành mục tiêu hôm nay nhé.");
         }
-      }, 60000); // kiểm tra mỗi phút
+      }, 60000);
+    }
+
+    function renderCalendar() {
+      const tbody = document.getElementById("calendarBody");
+      tbody.innerHTML = "";
+      const days = Object.keys(done).sort().reverse();
+      days.forEach(day => {
+        const row = document.createElement("tr");
+        const noteVal = notes[day] || "";
+        row.innerHTML = `
+          <td>${day}</td>
+          <td>${Object.keys(done[day]).join(", ")}</td>
+          <td><textarea onchange="saveNote('${day}', this.value)">${noteVal}</textarea></td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function saveNote(day, value) {
+      notes[day] = value;
+      localStorage.setItem("notes", JSON.stringify(notes));
+    }
+
+    function xoaLichHomNay() {
+      if (confirm("Bạn có chắc chắn muốn xóa dữ liệu nhiệm vụ hôm nay không?")) {
+        if (done[today]) {
+          let lost = 0;
+          Object.keys(done[today]).forEach(task => {
+            lost += task === 'on' ? 30 : 10;
+          });
+          diem = Math.max(0, diem - lost);
+          delete done[today];
+          localStorage.setItem("diem", diem);
+          localStorage.setItem("done", JSON.stringify(done));
+          alert("Đã xóa nhiệm vụ hôm nay và trừ điểm tương ứng.");
+          updateProgress();
+          renderCalendar();
+        }
+      }
+    }
+
+    function xoaGhiChuHomNay() {
+      if (confirm("Bạn có chắc chắn muốn xóa ghi chú hôm nay không?")) {
+        if (notes[today]) {
+          delete notes[today];
+          localStorage.setItem("notes", JSON.stringify(notes));
+          alert("Đã xóa ghi chú hôm nay.");
+          renderCalendar();
+        }
+      }
     }
 
     updateProgress();
+    renderCalendar();
+    showDailyQuote();
     startReminderCheck();
   </script>
 </body>
