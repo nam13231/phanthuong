@@ -325,9 +325,34 @@
     let checkinStart = parseInt(localStorage.getItem("checkinStart")) || 0;
     let checkinTimerId = null;
 
-    function updateProgress() {
-      const milestone = getCurrentMilestone();
-      const nextMilestone = getNextMilestone();
+      function updateProgress() {
+      // Xác định mốc tiếp theo
+      let nextMilestone = milestones.find(m => m.score > diem);
+    
+      if (!nextMilestone) {
+        document.getElementById("progress").innerText =
+          `Điểm hiện tại: ${diem} / ${TOTAL_SCORE} (Đạt mốc cao nhất! 🎉)`;
+      } else {
+        // Hiển thị tiến độ tính từ 0 tới mốc tiếp theo
+        let progress = diem;
+        let needed = nextMilestone.score;
+    
+        document.getElementById("progress").innerText =
+          `Điểm hiện tại: ${progress} / ${needed} (Tiến đến: ${nextMilestone.label})`;
+      }
+    
+      // Cập nhật box điểm thưởng
+      document.getElementById("bonusScoreBox").innerText =
+        `Tổng điểm từ điểm tốt: ${diemThuong}`;
+    
+      updateBonusStats();
+      renderMissedTasks();
+    
+      if (diem >= TOTAL_SCORE) {
+        alert("🎉 Chúc mừng bạn đã đạt được phần thưởng cao nhất: Xiaomi 16 Pro Max!");
+      }
+    }
+    
 
       if (!nextMilestone) {
         // Đã vượt mốc cao nhất
