@@ -1,94 +1,279 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Mục Tiêu Học Tập</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-image: url('mid.png');
-      background-size: cover;
-      background-position: center;
-      color: #fff;
-      text-align: center;
-    }
-    .container {
-      background: rgba(0, 0, 0, 0.6);
-      padding: 20px;
-      max-width: 900px;
-      margin: 40px auto;
-      border-radius: 15px;
-    }
-    img {
-      width: 100%;
-      border-radius: 15px;
-    }
-    button {
-      margin: 5px;
-      padding: 10px 20px;
-      font-size: 16px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      background-color: #4caf50;
-      color: white;
-    }
-    #progress {
-      margin-top: 20px;
-      font-size: 18px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-      background: #ffffff10;
-      overflow-x: auto;
-    }
-    th, td {
-      border: 1px solid #ffffff30;
-      padding: 8px;
-      color: #fff;
-    }
-    input[type="time"], textarea {
-      padding: 6px;
-      border-radius: 6px;
-      border: none;
-    }
-    #dailyQuote {
-      font-size: 18px;
-      margin-top: 20px;
-      padding: 10px;
-      background: #ffffff20;
-      border-radius: 10px;
-    }
-    #missedTasksList {
-      margin-top: 20px;
-      background: #ffffff20;
-      padding: 15px;
-      border-radius: 10px;
-    }
-  </style>
+<meta charset="UTF-8" />
+<title>Mục Tiêu Học Tập</title>
+<style>
+  /* Reset & cơ bản */
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-image: url('mid.png');
+    background-size: cover;
+    background-position: center;
+    color: #f0f0f0;
+    text-align: center;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 30px 15px;
+    background-attachment: fixed;
+  }
+  .container {
+    background: rgba(20, 20, 20, 0.85);
+    padding: 30px 30px 40px;
+    max-width: 900px;
+    width: 100%;
+    border-radius: 18px;
+    box-shadow: 0 0 20px 4px rgba(255, 215, 0, 0.4);
+  }
+  h1 {
+    font-weight: 700;
+    font-size: 2.3rem;
+    margin-bottom: 15px;
+    text-shadow: 0 0 8px #ffd700aa;
+  }
+  img {
+    width: 100%;
+    max-height: 300px;
+    object-fit: contain;
+    border-radius: 15px;
+    box-shadow: 0 0 20px #ffd700aa;
+    margin-bottom: 25px;
+  }
+  #progress {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    text-shadow: 0 0 6px #fff8;
+  }
+  #bonusScoreBox {
+    margin-top: 10px;
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: #a0d8a0;
+    text-shadow: 0 0 4px #5a8f5a;
+  }
+  #rewardBox {
+    margin-top: 18px;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #ffd700;
+    text-shadow: 0 0 10px #ffda44cc;
+  }
+  #dailyQuote {
+    margin-bottom: 25px;
+    font-size: 1.3rem;
+    font-style: italic;
+    color: #ffe082;
+    text-shadow: 0 0 5px #b58900cc;
+  }
+
+  /* Nút bấm */
+  button {
+    margin: 5px 8px 12px 8px;
+    padding: 12px 28px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    background-color: #4caf50;
+    color: white;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.15s ease;
+    box-shadow: 0 3px 6px #2c7a2caa;
+  }
+  button:hover {
+    background-color: #67c767;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px #4caf5077;
+  }
+  button:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 6px #2c7a2caa;
+  }
+  button[style*="background-color:#f44336"] {
+    background-color: #f44336;
+    box-shadow: 0 3px 6px #a52828aa;
+  }
+  button[style*="background-color:#f44336"]:hover {
+    background-color: #ff6659;
+    box-shadow: 0 6px 12px #f4433677;
+  }
+  button[style*="background-color:#e91e63"] {
+    background-color: #e91e63;
+    box-shadow: 0 3px 6px #a0264d99;
+  }
+  button[style*="background-color:#e91e63"]:hover {
+    background-color: #f0487d;
+    box-shadow: 0 6px 12px #e91e6377;
+  }
+
+  /* Input */
+  input[type="time"], input[type="number"] {
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: none;
+    font-size: 1rem;
+    width: 160px;
+    box-shadow: inset 0 0 6px #0008;
+    margin-right: 10px;
+    transition: box-shadow 0.3s ease;
+  }
+  input[type="time"]:focus, input[type="number"]:focus {
+    outline: none;
+    box-shadow: inset 0 0 12px #4caf5088;
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 60px;
+    resize: vertical;
+    border-radius: 10px;
+    border: none;
+    padding: 8px 10px;
+    font-size: 1rem;
+    font-family: inherit;
+    box-shadow: inset 0 0 6px #000a;
+    color: #fff;
+    background-color: #222a;
+    transition: box-shadow 0.3s ease;
+  }
+  textarea:focus {
+    outline: none;
+    box-shadow: inset 0 0 10px #4caf5088;
+    background-color: #22331a;
+  }
+
+  /* Các mục nhỏ */
+  #daily-buttons h3 {
+    margin-top: 30px;
+    margin-bottom: 12px;
+    font-size: 1.25rem;
+    color: #ffd54f;
+    text-shadow: 0 0 6px #b38600cc;
+  }
+
+  #hocThemStats {
+    margin-top: 20px;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #9ae29a;
+    text-shadow: 0 0 5px #3f763fbb;
+  }
+
+  #missedTasksList {
+    margin-top: 25px;
+    background: rgba(255 255 255 / 0.1);
+    padding: 18px 22px;
+    border-radius: 14px;
+    font-size: 1.1rem;
+    text-align: left;
+    max-height: 150px;
+    overflow-y: auto;
+  }
+  #missedTasksList h3 {
+    color: #fff9a7;
+    margin-bottom: 12px;
+    text-shadow: 0 0 6px #b38600cc;
+  }
+  #missedTasksList div {
+    margin-bottom: 10px;
+  }
+  #missedTasksList button {
+    font-size: 0.85rem;
+    padding: 6px 14px;
+    background-color: #ffb74d;
+    color: #4a2e00;
+    font-weight: 700;
+    box-shadow: none;
+  }
+  #missedTasksList button:hover {
+    background-color: #ffcc60;
+  }
+
+  /* Bảng lịch */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 30px;
+    background: rgba(255 255 255 / 0.12);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  th, td {
+    border: 1px solid rgba(255 255 255 / 0.3);
+    padding: 10px 12px;
+    color: #eee;
+    vertical-align: top;
+  }
+  th {
+    background: rgba(255 215 0 / 0.4);
+    color: #222;
+    font-weight: 700;
+    text-shadow: none;
+  }
+  textarea {
+    font-size: 1rem;
+  }
+
+</style>
 </head>
 <body>
   <div class="container">
-    <h1>🎯 Mục tiêu học tập mỗi ngày</h1>
-    <img src="Xiaomi-Mi-11-Ultra.jpg" alt="Phần thưởng">
-    <p id="progress">Diểm hiện tại: 0 / 3120</p>
+    <h1>🎯 Mục tiêu học tập đến ngày thi 15/06/2026</h1>
+    <img src="Xiaomi-Mi-11-Ultra.jpg" alt="Phần thưởng" />
+    <p id="progress">Điểm hiện tại: 0 / 6000</p>
 
     <div id="dailyQuote"></div>
 
     <div id="daily-buttons">
-      <button onclick="diemDanh()">Điểm danh hôm nay (+10)</button><br>
-      <button onclick="congDiem('toan', 10)">Học Toán (+10)</button>
-      <button onclick="congDiem('ly', 10)">Học Lý (+10)</button>
-      <button onclick="congDiem('hoa', 10)">Học Hóa (+10)</button>
-      <button onclick="congDiem('anh', 10)">Học Tiếng Anh (+10)</button><br>
-      <button onclick="congDiem('on', 30)">Ôn tập kiến thức (+30)</button>
+      <button onclick="diemDanh()">Điểm danh hôm nay (+5)</button><br />
+
+      <h3>🧮 Toán</h3>
+      <button onclick="congDiem('toan_hoc', 5)">Học Toán (+5)</button>
+      <button onclick="congDiem('toan_cauhoi', 5)">Làm 50 câu hỏi Toán (+5)</button>
+
+      <h3>🔭 Lý</h3>
+      <button onclick="congDiem('ly_hoc', 5)">Học Lý (+5)</button>
+      <button onclick="congDiem('ly_cauhoi', 5)">Làm 50 câu hỏi Lý (+5)</button>
+
+      <h3>⚗️ Hóa</h3>
+      <button onclick="congDiem('hoa_hoc', 5)">Học Hóa (+5)</button>
+      <button onclick="congDiem('hoa_cauhoi', 5)">Làm 50 câu hỏi Hóa (+5)</button>
+
+      <h3>🇬🇧 Tiếng Anh</h3>
+      <button onclick="congDiem('anh_nguPhap', 5)">Học ngữ pháp (+5)</button>
+      <button onclick="congDiem('anh_tuVung', 5)">Học 5 từ vựng mới (+5)</button>
+      <button onclick="congDiem('anh_nghe', 5)">Luyện nghe tiếng Anh (+5)</button>
+
+      <h3>📚 Ôn tập</h3>
+      <button onclick="congDiem('on', 20)">Ôn tập kiến thức (+20)</button>
+
+      <h3>🚀 Học thêm</h3>
+      <input type="number" id="hocThemPhut" placeholder="Phút học thêm" />
+      <button onclick="hocThem()">Cộng điểm học thêm</button>
     </div>
 
+    <div id="hocThemStats"></div>
+
+    <div style="margin-top:20px">
+      <h3>🏆 Thêm điểm khi đạt điểm tốt</h3>
+      <input type="number" id="diemSo" min="7" max="10" placeholder="Nhập điểm 7-10" />
+      <button onclick="themDiemSo()">+ Điểm thưởng</button>
+    </div>
+
+    <div id="bonusScoreBox"></div>
+
     <div style="margin-top: 20px;">
-      <label>⏰ Đặt giờ nhắc học: <input type="time" id="reminderTime"> <button onclick="setReminder()">Lưu</button></label>
+      <label
+        >⏰ Nhắc giờ học:
+        <input type="time" id="reminderTime" /> <button onclick="setReminder()">Lưu</button></label
+      >
     </div>
 
     <div style="margin-top: 15px;">
@@ -111,52 +296,101 @@
         <tbody id="calendarBody"></tbody>
       </table>
     </div>
+
+    <div id="rewardBox"></div>
   </div>
 
 <script>
-  const TOTAL_DAYS = 312;
-  const TOTAL_SCORE = TOTAL_DAYS * 100;
+  const TOTAL_SCORE = 6000;
   let diem = parseInt(localStorage.getItem("diem")) || 0;
-  let today = new Date().toISOString().split('T')[0];
+  let diemThuong = parseInt(localStorage.getItem("diemThuong")) || 0;
+  let bonusStats = JSON.parse(localStorage.getItem("bonusStats")) || {};
+  let today = new Date().toISOString().split("T")[0];
   let done = JSON.parse(localStorage.getItem("done")) || {};
   let notes = JSON.parse(localStorage.getItem("notes")) || {};
-  let reminderTime = localStorage.getItem("reminderTime") || "";
   let lastCheck = localStorage.getItem("lastCheck") || "";
-
-  const tasks = ['on', 'toan', 'ly', 'hoa', 'anh', 'diemdanh'];
+  const tasks = [
+    "on",
+    "toan_hoc",
+    "toan_cauhoi",
+    "ly_hoc",
+    "ly_cauhoi",
+    "hoa_hoc",
+    "hoa_cauhoi",
+    "anh_nguPhap",
+    "anh_tuVung",
+    "anh_nghe",
+    "diemdanh",
+  ];
   const quotes = [
     "📚 Hôm nay bạn học gì rồi? Cố gắng lên nhé!",
     "🚀 Mỗi ngày một bước, bạn sẽ tiến xa!",
     "💡 Học hôm nay - Thành công ngày mai!",
     "🔥 Đừng để ngày hôm nay trôi qua vô ích!",
-    "🌱 Tri thức là sức mạnh, cố lên bạn nhé!"
+    "🌱 Tri thức là sức mạnh, cố lên bạn nhé!",
   ];
 
-  function showDailyQuote() {
-    const index = new Date().getDate() % quotes.length;
-    document.getElementById("dailyQuote").innerText = quotes[index];
-  }
-
   if (lastCheck && lastCheck !== today) {
-    const missed = done[lastCheck] || {}; // đảm bảo dù không có vẫn trừ
-    tasks.forEach(task => {
-      if (!missed[task]) diem -= task === 'on' ? 30 : 10;
+    const missed = done[lastCheck] || {};
+    tasks.forEach((task) => {
+      if (!missed[task]) diem -= task === "on" ? 20 : 5;
     });
     diem = Math.max(0, diem);
     localStorage.setItem("diem", diem);
-    localStorage.setItem("missedTasks_" + lastCheck, JSON.stringify(tasks.filter(task => !missed[task])));
+    localStorage.setItem(
+      "missedTasks_" + lastCheck,
+      JSON.stringify(tasks.filter((task) => !missed[task]))
+    );
   }
   localStorage.setItem("lastCheck", today);
 
+  const rewards = [
+    { score: 2000, reward: "Mua đồ ăn yêu thích 🍜" },
+    { score: 4000, reward: "Mua món đồ bạn yêu thích 🧸" },
+    { score: 6000, reward: "Xiaomi Mi 11 Ultra 📱" },
+    { score: 10000, reward: "Xiaomi Mi 13 Pro 🚀" },
+    { score: 20000, reward: "🔥 Xiaomi 16 Pro Max (siêu quà) 🔥" },
+  ];
+
+  function getNextRewardScore(currentScore) {
+    for (let i = 0; i < rewards.length; i++) {
+      if (rewards[i].score > currentScore) {
+        return rewards[i].score;
+      }
+    }
+    return rewards[rewards.length - 1].score;
+  }
+
   function updateProgress() {
-    document.getElementById("progress").innerText = `Diểm hiện tại: ${diem} / ${TOTAL_SCORE}`;
-    if (diem >= TOTAL_SCORE) alert("🎉 Chúc mừng bạn đã hoàn thành mục tiêu và giành được Xiaomi Mi 11 Ultra!");
+    const nextScore = getNextRewardScore(diem);
+    document.getElementById("progress").innerText = `Điểm hiện tại: ${diem} / ${nextScore}`;
+    document.getElementById("bonusScoreBox").innerText = `Tổng điểm từ điểm tốt: ${diemThuong}`;
+    if (diem >= TOTAL_SCORE) alert("🎉 Chúc mừng bạn đã đạt được Xiaomi Mi 11 Ultra!");
+    updateBonusStats();
     renderMissedTasks();
+    updateRewards();
+  }
+
+  function updateRewards() {
+    let rewardBox = document.getElementById("rewardBox");
+    // Tìm phần thưởng cao nhất đạt được
+    let currentReward = null;
+    for (let i = rewards.length - 1; i >= 0; i--) {
+      if (diem >= rewards[i].score) {
+        currentReward = rewards[i];
+        break;
+      }
+    }
+    if (currentReward) {
+      rewardBox.innerText = `🏅 Phần thưởng hiện tại: ${currentReward.reward} (mốc ${currentReward.score} điểm)`;
+    } else {
+      rewardBox.innerText = "🏅 Chưa đạt mốc phần thưởng nào, cố gắng thêm nhé!";
+    }
   }
 
   function congDiem(task, amount) {
     let doneToday = done[today] || {};
-    if (doneToday[task]) return alert("Bạn đã hoàn thành nhiệm vụ này hôm nay!");
+    if (doneToday[task]) return alert("Bạn đã làm nhiệm vụ này hôm nay rồi!");
     diem += amount;
     doneToday[task] = true;
     done[today] = doneToday;
@@ -167,42 +401,67 @@
   }
 
   function diemDanh() {
-    congDiem("diemdanh", 10);
+    congDiem("diemdanh", 5);
   }
 
-  function setReminder() {
-    const time = document.getElementById("reminderTime").value;
-    if (!time) return alert("Hãy chọn giờ trước!");
-    localStorage.setItem("reminderTime", time);
-    alert("Đã lưu giờ nhắc học lúc " + time);
+  function hocThem() {
+    let minutes = parseInt(document.getElementById("hocThemPhut").value);
+    if (isNaN(minutes) || minutes <= 0) return alert("Nhập số phút hợp lệ!");
+    let diemCong = Math.min(30, Math.floor(minutes / 2));
+    diem += diemCong;
+    let date = new Date();
+    let keyWeek = getWeekNumber(date);
+    let keyMonth = date.getMonth();
+    bonusStats[keyWeek] = (bonusStats[keyWeek] || 0) + diemCong;
+    bonusStats["m" + keyMonth] = (bonusStats["m" + keyMonth] || 0) + diemCong;
+    localStorage.setItem("bonusStats", JSON.stringify(bonusStats));
+    localStorage.setItem("diem", diem);
+    alert(`+${diemCong} điểm từ học thêm!`);
+    updateProgress();
+    document.getElementById("hocThemPhut").value = "";
   }
 
-  function startReminderCheck() {
-    if (!("Notification" in window)) return;
-    Notification.requestPermission();
-    setInterval(() => {
-      const t = localStorage.getItem("reminderTime");
-      if (!t) return;
-      const now = new Date();
-      const nowStr = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
-      if (nowStr === t) {
-        new Notification("⏰ Đến giờ học rồi! Hãy hoàn thành mục tiêu hôm nay nhé.");
-      }
-    }, 60000);
+  function themDiemSo() {
+    let val = parseInt(document.getElementById("diemSo").value);
+    let cong = 0;
+    if (val === 7) cong = 5;
+    else if (val === 8) cong = 10;
+    else if (val === 9) cong = 15;
+    else if (val === 10) cong = 20;
+    else return alert("Chỉ nhận điểm từ 7 đến 10");
+    diem += cong;
+    diemThuong += cong;
+    localStorage.setItem("diem", diem);
+    localStorage.setItem("diemThuong", diemThuong);
+    updateProgress();
+    alert(`+${cong} điểm thưởng từ điểm ${val}`);
+    document.getElementById("diemSo").value = "";
+  }
+
+  function updateBonusStats() {
+    let now = new Date();
+    let w = getWeekNumber(now);
+    let m = "m" + now.getMonth();
+    let week = bonusStats[w] || 0;
+    let month = bonusStats[m] || 0;
+    document.getElementById("hocThemStats").innerHTML = `📊 Điểm học thêm tuần này: ${week} | tháng này: ${month}`;
+  }
+
+  function getWeekNumber(d) {
+    d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+    let yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+    return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
   }
 
   function renderCalendar() {
     const tbody = document.getElementById("calendarBody");
     tbody.innerHTML = "";
     const days = Object.keys(done).sort().reverse();
-    days.forEach(day => {
+    days.forEach((day) => {
       const row = document.createElement("tr");
       const noteVal = notes[day] || "";
-      row.innerHTML = `
-        <td>${day}</td>
-        <td>${Object.keys(done[day]).join(", ")}</td>
-        <td><textarea onchange="saveNote('${day}', this.value)">${noteVal}</textarea></td>
-      `;
+      row.innerHTML = `<td>${day}</td><td>${Object.keys(done[day]).join(", ")}</td><td><textarea onchange="saveNote('${day}', this.value)">${noteVal}</textarea></td>`;
       tbody.appendChild(row);
     });
   }
@@ -226,8 +485,8 @@
     const missedTasks = JSON.parse(localStorage.getItem(key));
     if (!missedTasks) return;
     let added = 0;
-    missedTasks.forEach(task => {
-      added += task === 'on' ? 30 : 10;
+    missedTasks.forEach((task) => {
+      added += task === "on" ? 20 : 5;
       done[day] = done[day] || {};
       done[day][task] = true;
     });
@@ -235,7 +494,7 @@
     localStorage.removeItem(key);
     localStorage.setItem("diem", diem);
     localStorage.setItem("done", JSON.stringify(done));
-    alert(`Đã làm bù ${missedTasks.length} nhiệm vụ cho ngày ${day} (+${added} điểm)`);
+    alert(`Đã làm bù ${missedTasks.length} nhiệm vụ ngày ${day} (+${added} điểm)`);
     updateProgress();
     renderCalendar();
   }
@@ -246,11 +505,11 @@
   }
 
   function xoaLichHomNay() {
-    if (confirm("Bạn có chắc chắn muốn xóa dữ liệu nhiệm vụ hôm nay không?")) {
+    if (confirm("Xóa tất cả nhiệm vụ hôm nay?")) {
       if (done[today]) {
         let lost = 0;
-        Object.keys(done[today]).forEach(task => {
-          lost += task === 'on' ? 30 : 10;
+        Object.keys(done[today]).forEach((task) => {
+          lost += task === "on" ? 20 : 5;
         });
         diem = Math.max(0, diem - lost);
         delete done[today];
@@ -264,7 +523,7 @@
   }
 
   function xoaGhiChuHomNay() {
-    if (confirm("Bạn có chắc chắn muốn xóa ghi chú hôm nay không?")) {
+    if (confirm("Xóa ghi chú hôm nay?")) {
       if (notes[today]) {
         delete notes[today];
         localStorage.setItem("notes", JSON.stringify(notes));
@@ -274,10 +533,40 @@
     }
   }
 
-  updateProgress();
-  renderCalendar();
-  showDailyQuote();
-  startReminderCheck();
+  function setReminder() {
+    const time = document.getElementById("reminderTime").value;
+    if (!time) return alert("Hãy chọn giờ!");
+    localStorage.setItem("reminderTime", time);
+    alert("Đã lưu giờ nhắc học: " + time);
+  }
+
+  function startReminderCheck() {
+    if (!("Notification" in window)) return;
+    Notification.requestPermission();
+    setInterval(() => {
+      const t = localStorage.getItem("reminderTime");
+      if (!t) return;
+      const now = new Date();
+      const nowStr =
+        now.getHours().toString().padStart(2, "0") +
+        ":" +
+        now.getMinutes().toString().padStart(2, "0");
+      if (nowStr === t) {
+        new Notification("⏰ Đến giờ học rồi! Hãy hoàn thành mục tiêu hôm nay nhé.");
+      }
+    }, 60000);
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    updateProgress();
+    renderCalendar();
+    startReminderCheck();
+    document.getElementById("dailyQuote").innerText =
+      quotes[new Date().getDate() % quotes.length];
+  });
 </script>
 </body>
 </html>
+
+
+
