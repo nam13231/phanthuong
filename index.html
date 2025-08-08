@@ -62,13 +62,19 @@
       background: #ffffff20;
       border-radius: 10px;
     }
+    #missedTasksList {
+      margin-top: 20px;
+      background: #ffffff20;
+      padding: 15px;
+      border-radius: 10px;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>🎯 Mục tiêu học tập mỗi ngày</h1>
     <img src="Xiaomi-Mi-11-Ultra.jpg" alt="Phần thưởng">
-    <p id="progress">Điểm hiện tại: 0 / 3120</p>
+    <p id="progress">Diểm hiện tại: 0 / 3120</p>
 
     <div id="dailyQuote"></div>
 
@@ -87,8 +93,10 @@
 
     <div style="margin-top: 15px;">
       <button style="background-color:#f44336" onclick="xoaLichHomNay()">🗑️ Xóa dữ liệu hôm nay</button>
-      <button style="background-color:#e91e63" onclick="xoaGhiChuHomNay()">🗒️ Xóa ghi chú hôm nay</button>
+      <button style="background-color:#e91e63" onclick="xoaGhiChuHomNay()">📜 Xóa ghi chú hôm nay</button>
     </div>
+
+    <div id="missedTasksList"></div>
 
     <div style="margin-top: 30px;">
       <h2>🗓️ Lịch học & Ghi chú</h2>
@@ -105,138 +113,171 @@
     </div>
   </div>
 
-  <script>
-    const TOTAL_DAYS = 312;
-    const TOTAL_SCORE = TOTAL_DAYS * 100;
-    let diem = parseInt(localStorage.getItem("diem")) || 0;
-    let today = new Date().toISOString().split('T')[0];
-    let done = JSON.parse(localStorage.getItem("done")) || {};
-    let notes = JSON.parse(localStorage.getItem("notes")) || {};
-    let reminderTime = localStorage.getItem("reminderTime") || "";
-    let lastCheck = localStorage.getItem("lastCheck") || "";
+<script>
+  const TOTAL_DAYS = 312;
+  const TOTAL_SCORE = TOTAL_DAYS * 100;
+  let diem = parseInt(localStorage.getItem("diem")) || 0;
+  let today = new Date().toISOString().split('T')[0];
+  let done = JSON.parse(localStorage.getItem("done")) || {};
+  let notes = JSON.parse(localStorage.getItem("notes")) || {};
+  let reminderTime = localStorage.getItem("reminderTime") || "";
+  let lastCheck = localStorage.getItem("lastCheck") || "";
 
-    const quotes = [
-      "📚 Hôm nay bạn học gì rồi? Cố gắng lên nhé!",
-      "🚀 Mỗi ngày một bước, bạn sẽ tiến xa!",
-      "💡 Học hôm nay - Thành công ngày mai!",
-      "🔥 Đừng để ngày hôm nay trôi qua vô ích!",
-      "🌱 Tri thức là sức mạnh, cố lên bạn nhé!"
-    ];
+  const tasks = ['on', 'toan', 'ly', 'hoa', 'anh', 'diemdanh'];
+  const quotes = [
+    "📚 Hôm nay bạn học gì rồi? Cố gắng lên nhé!",
+    "🚀 Mỗi ngày một bước, bạn sẽ tiến xa!",
+    "💡 Học hôm nay - Thành công ngày mai!",
+    "🔥 Đừng để ngày hôm nay trôi qua vô ích!",
+    "🌱 Tri thức là sức mạnh, cố lên bạn nhé!"
+  ];
 
-    function showDailyQuote() {
-      const index = new Date().getDate() % quotes.length;
-      document.getElementById("dailyQuote").innerText = quotes[index];
-    }
+  function showDailyQuote() {
+    const index = new Date().getDate() % quotes.length;
+    document.getElementById("dailyQuote").innerText = quotes[index];
+  }
 
-    if (lastCheck && lastCheck !== today) {
-      const missed = done[lastCheck];
-      if (missed) {
-        const tasks = ['on', 'toan', 'ly', 'hoa', 'anh', 'diemdanh'];
-        tasks.forEach(task => {
-          if (!missed[task]) diem -= task === 'on' ? 30 : 10;
-        });
-        diem = Math.max(0, diem);
-        localStorage.setItem("diem", diem);
-      }
-    }
-    localStorage.setItem("lastCheck", today);
+  if (lastCheck && lastCheck !== today) {
+    const missed = done[lastCheck] || {}; // đảm bảo dù không có vẫn trừ
+    tasks.forEach(task => {
+      if (!missed[task]) diem -= task === 'on' ? 30 : 10;
+    });
+    diem = Math.max(0, diem);
+    localStorage.setItem("diem", diem);
+    localStorage.setItem("missedTasks_" + lastCheck, JSON.stringify(tasks.filter(task => !missed[task])));
+  }
+  localStorage.setItem("lastCheck", today);
 
-    function updateProgress() {
-      document.getElementById("progress").innerText = `Điểm hiện tại: ${diem} / ${TOTAL_SCORE}`;
-      if (diem >= TOTAL_SCORE) alert("🎉 Chúc mừng bạn đã hoàn thành mục tiêu và giành được Xiaomi Mi 11 Ultra!");
-    }
+  function updateProgress() {
+    document.getElementById("progress").innerText = `Diểm hiện tại: ${diem} / ${TOTAL_SCORE}`;
+    if (diem >= TOTAL_SCORE) alert("🎉 Chúc mừng bạn đã hoàn thành mục tiêu và giành được Xiaomi Mi 11 Ultra!");
+    renderMissedTasks();
+  }
 
-    function congDiem(task, amount) {
-      let doneToday = done[today] || {};
-      if (doneToday[task]) return alert("Bạn đã hoàn thành nhiệm vụ này hôm nay!");
-      diem += amount;
-      doneToday[task] = true;
-      done[today] = doneToday;
-      localStorage.setItem("diem", diem);
-      localStorage.setItem("done", JSON.stringify(done));
-      updateProgress();
-      renderCalendar();
-    }
-
-    function diemDanh() {
-      congDiem("diemdanh", 10);
-    }
-
-    function setReminder() {
-      const time = document.getElementById("reminderTime").value;
-      if (!time) return alert("Hãy chọn giờ trước!");
-      localStorage.setItem("reminderTime", time);
-      alert("Đã lưu giờ nhắc học lúc " + time);
-    }
-
-    function startReminderCheck() {
-      if (!("Notification" in window)) return;
-      Notification.requestPermission();
-      setInterval(() => {
-        const t = localStorage.getItem("reminderTime");
-        if (!t) return;
-        const now = new Date();
-        const nowStr = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
-        if (nowStr === t) {
-          new Notification("⏰ Đến giờ học rồi! Hãy hoàn thành mục tiêu hôm nay nhé.");
-        }
-      }, 60000);
-    }
-
-    function renderCalendar() {
-      const tbody = document.getElementById("calendarBody");
-      tbody.innerHTML = "";
-      const days = Object.keys(done).sort().reverse();
-      days.forEach(day => {
-        const row = document.createElement("tr");
-        const noteVal = notes[day] || "";
-        row.innerHTML = `
-          <td>${day}</td>
-          <td>${Object.keys(done[day]).join(", ")}</td>
-          <td><textarea onchange="saveNote('${day}', this.value)">${noteVal}</textarea></td>
-        `;
-        tbody.appendChild(row);
-      });
-    }
-
-    function saveNote(day, value) {
-      notes[day] = value;
-      localStorage.setItem("notes", JSON.stringify(notes));
-    }
-
-    function xoaLichHomNay() {
-      if (confirm("Bạn có chắc chắn muốn xóa dữ liệu nhiệm vụ hôm nay không?")) {
-        if (done[today]) {
-          let lost = 0;
-          Object.keys(done[today]).forEach(task => {
-            lost += task === 'on' ? 30 : 10;
-          });
-          diem = Math.max(0, diem - lost);
-          delete done[today];
-          localStorage.setItem("diem", diem);
-          localStorage.setItem("done", JSON.stringify(done));
-          alert("Đã xóa nhiệm vụ hôm nay và trừ điểm tương ứng.");
-          updateProgress();
-          renderCalendar();
-        }
-      }
-    }
-
-    function xoaGhiChuHomNay() {
-      if (confirm("Bạn có chắc chắn muốn xóa ghi chú hôm nay không?")) {
-        if (notes[today]) {
-          delete notes[today];
-          localStorage.setItem("notes", JSON.stringify(notes));
-          alert("Đã xóa ghi chú hôm nay.");
-          renderCalendar();
-        }
-      }
-    }
-
+  function congDiem(task, amount) {
+    let doneToday = done[today] || {};
+    if (doneToday[task]) return alert("Bạn đã hoàn thành nhiệm vụ này hôm nay!");
+    diem += amount;
+    doneToday[task] = true;
+    done[today] = doneToday;
+    localStorage.setItem("diem", diem);
+    localStorage.setItem("done", JSON.stringify(done));
     updateProgress();
     renderCalendar();
-    showDailyQuote();
-    startReminderCheck();
-  </script>
+  }
+
+  function diemDanh() {
+    congDiem("diemdanh", 10);
+  }
+
+  function setReminder() {
+    const time = document.getElementById("reminderTime").value;
+    if (!time) return alert("Hãy chọn giờ trước!");
+    localStorage.setItem("reminderTime", time);
+    alert("Đã lưu giờ nhắc học lúc " + time);
+  }
+
+  function startReminderCheck() {
+    if (!("Notification" in window)) return;
+    Notification.requestPermission();
+    setInterval(() => {
+      const t = localStorage.getItem("reminderTime");
+      if (!t) return;
+      const now = new Date();
+      const nowStr = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
+      if (nowStr === t) {
+        new Notification("⏰ Đến giờ học rồi! Hãy hoàn thành mục tiêu hôm nay nhé.");
+      }
+    }, 60000);
+  }
+
+  function renderCalendar() {
+    const tbody = document.getElementById("calendarBody");
+    tbody.innerHTML = "";
+    const days = Object.keys(done).sort().reverse();
+    days.forEach(day => {
+      const row = document.createElement("tr");
+      const noteVal = notes[day] || "";
+      row.innerHTML = `
+        <td>${day}</td>
+        <td>${Object.keys(done[day]).join(", ")}</td>
+        <td><textarea onchange="saveNote('${day}', this.value)">${noteVal}</textarea></td>
+      `;
+      tbody.appendChild(row);
+    });
+  }
+
+  function renderMissedTasks() {
+    const container = document.getElementById("missedTasksList");
+    container.innerHTML = "<h3>🔄 Nhiệm vụ chưa làm (có thể làm bù)</h3>";
+    let html = "";
+    for (let i in localStorage) {
+      if (i.startsWith("missedTasks_")) {
+        const day = i.replace("missedTasks_", "");
+        const tasks = JSON.parse(localStorage.getItem(i));
+        html += `<div><b>${day}</b>: ${tasks.join(", ")} <button onclick="lamBu('${day}')">Làm bù</button></div>`;
+      }
+    }
+    container.innerHTML += html;
+  }
+
+  function lamBu(day) {
+    const key = "missedTasks_" + day;
+    const missedTasks = JSON.parse(localStorage.getItem(key));
+    if (!missedTasks) return;
+    let added = 0;
+    missedTasks.forEach(task => {
+      added += task === 'on' ? 30 : 10;
+      done[day] = done[day] || {};
+      done[day][task] = true;
+    });
+    diem += added;
+    localStorage.removeItem(key);
+    localStorage.setItem("diem", diem);
+    localStorage.setItem("done", JSON.stringify(done));
+    alert(`Đã làm bù ${missedTasks.length} nhiệm vụ cho ngày ${day} (+${added} điểm)`);
+    updateProgress();
+    renderCalendar();
+  }
+
+  function saveNote(day, value) {
+    notes[day] = value;
+    localStorage.setItem("notes", JSON.stringify(notes));
+  }
+
+  function xoaLichHomNay() {
+    if (confirm("Bạn có chắc chắn muốn xóa dữ liệu nhiệm vụ hôm nay không?")) {
+      if (done[today]) {
+        let lost = 0;
+        Object.keys(done[today]).forEach(task => {
+          lost += task === 'on' ? 30 : 10;
+        });
+        diem = Math.max(0, diem - lost);
+        delete done[today];
+        localStorage.setItem("diem", diem);
+        localStorage.setItem("done", JSON.stringify(done));
+        alert("Đã xóa nhiệm vụ hôm nay và trừ điểm tương ứng.");
+        updateProgress();
+        renderCalendar();
+      }
+    }
+  }
+
+  function xoaGhiChuHomNay() {
+    if (confirm("Bạn có chắc chắn muốn xóa ghi chú hôm nay không?")) {
+      if (notes[today]) {
+        delete notes[today];
+        localStorage.setItem("notes", JSON.stringify(notes));
+        alert("Đã xóa ghi chú hôm nay.");
+        renderCalendar();
+      }
+    }
+  }
+
+  updateProgress();
+  renderCalendar();
+  showDailyQuote();
+  startReminderCheck();
+</script>
 </body>
 </html>
