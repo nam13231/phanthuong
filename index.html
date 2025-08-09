@@ -194,7 +194,7 @@
     <h1>🎯 Mục tiêu học tập đến ngày thi 15/06/2026</h1>
     <img src="Xiaomi-Mi-11-Ultra.jpg" alt="Phần thưởng" />
 
-    <p id="progress">Điểm hiện tại: 0 / 1000</p>
+    <p id="progress">Điểm hiện tại: 0 / 2000</p>
     <div id="bonusScoreBox"></div>
 
     <div id="dailyQuote" style="font-style: italic; font-size:1.3rem; margin-bottom: 15px;"></div>
@@ -219,7 +219,7 @@
       <h3>🇬🇧 Tiếng Anh</h3>
       <button onclick="congDiem('anh_nguPhap', 5)">Học ngữ pháp (+5)</button>
       <button onclick="congDiem('anh_tuVung', 5)">Học 5 từ vựng mới (+5)</button>
- 
+      <button onclick="congDiem('anh_nghe', 5)">Luyện nghe tiếng Anh (+5)</button>
 
       <h3>📚 Ôn tập</h3>
       <button onclick="congDiem('on', 20)">Ôn tập kiến thức (+20)</button>
@@ -268,13 +268,13 @@
   </div>
 
   <script>
-    const TOTAL_SCORE = 18000;
+    const TOTAL_SCORE = 20000;
     const milestones = [
-      { score: 1000, label: "Mua đồ ăn yêu thích 🍜" },
-      { score: 3000, label: "Mua món đồ bạn yêu thích 🧸" },
+      { score: 2000, label: "Mua đồ ăn yêu thích 🍜" },
+      { score: 4000, label: "Mua món đồ bạn yêu thích 🧸" },
       { score: 6000, label: "Xiaomi Mi 11 Ultra 📱" },
       { score: 10000, label: "Xiaomi Mi 13 Pro 🚀" },
-      { score: 18000, label: "🔥 Xiaomi 16 Pro Max (siêu quà) 🔥" },
+      { score: 20000, label: "🔥 Xiaomi 16 Pro Max (siêu quà) 🔥" },
     ];
 
     let diem = parseInt(localStorage.getItem("diem")) || 0;
@@ -325,34 +325,9 @@
     let checkinStart = parseInt(localStorage.getItem("checkinStart")) || 0;
     let checkinTimerId = null;
 
-      function updateProgress() {
-      // Xác định mốc tiếp theo
-      let nextMilestone = milestones.find(m => m.score > diem);
-    
-      if (!nextMilestone) {
-        document.getElementById("progress").innerText =
-          `Điểm hiện tại: ${diem} / ${TOTAL_SCORE} (Đạt mốc cao nhất! 🎉)`;
-      } else {
-        // Hiển thị tiến độ tính từ 0 tới mốc tiếp theo
-        let progress = diem;
-        let needed = nextMilestone.score;
-    
-        document.getElementById("progress").innerText =
-          `Điểm hiện tại: ${progress} / ${needed} (Tiến đến: ${nextMilestone.label})`;
-      }
-    
-      // Cập nhật box điểm thưởng
-      document.getElementById("bonusScoreBox").innerText =
-        `Tổng điểm từ điểm tốt: ${diemThuong}`;
-    
-      updateBonusStats();
-      renderMissedTasks();
-    
-      if (diem >= TOTAL_SCORE) {
-        alert("🎉 Chúc mừng bạn đã đạt được phần thưởng cao nhất: Xiaomi 16 Pro Max!");
-      }
-    }
-    
+    function updateProgress() {
+      const milestone = getCurrentMilestone();
+      const nextMilestone = getNextMilestone();
 
       if (!nextMilestone) {
         // Đã vượt mốc cao nhất
@@ -640,6 +615,3 @@
   </script>
 </body>
 </html>
-
-
-
