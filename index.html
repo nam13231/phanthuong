@@ -187,6 +187,23 @@
     .secondary-btn:hover {
       background-color: #c2185b;
     }
+    .score-box, .timer-box {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+      margin-bottom: 20px;
+      display: inline-block;
+      color: #000; /* Sửa màu chữ thành đen để hiển thị rõ trên nền trắng */
+    }
+    .score-box h2, .timer-box h2 {
+      color: #000; /* Đảm bảo tiêu đề hiển thị rõ */
+    }
+    .time {
+      font-size: 2em;
+      margin-top: 10px;
+      color: #000; /* Sửa màu chữ timer thành đen */
+    }
   </style>
 </head>
 <body>
@@ -236,6 +253,19 @@
       <input type="number" id="diemSo" min="7" max="10" placeholder="Nhập điểm 7-10" />
       <button onclick="themDiemSo()">+ Điểm thưởng</button>
     </div>
+    <div class="score-box">
+      <h2>Điểm hiện tại</h2>
+      <p id="score">0 / 20000</p>
+      <input type="number" id="addPoints" placeholder="Nhập điểm hôm nay" />
+      <button onclick="addScore()">➕ Cộng điểm</button>
+    </div>
+
+    <div class="timer-box">
+      <h2>⏱ Bấm giờ</h2>
+      <div class="time" id="timer">00:00:00</div>
+      <button onclick="startTimer()">Bắt đầu</button>
+      <button onclick="stopTimer()">Dừng lại</button>
+    </div>
 
     <div style="margin-top: 20px;">
       <label>
@@ -284,6 +314,13 @@
     let done = JSON.parse(localStorage.getItem("done")) || {};
     let notes = JSON.parse(localStorage.getItem("notes")) || {};
     let lastCheck = localStorage.getItem("lastCheck") || "";
+    let checkinStart = parseInt(localStorage.getItem("checkinStart")) || 0;
+    let checkinTimerId = null;
+    let timerInterval = null;
+    let elapsedSeconds = parseInt(localStorage.getItem("elapsedSeconds")) || 0;
+    let running = localStorage.getItem("timerRunning") === "true";
+    let lastNotification = localStorage.getItem("lastNotification") || "";
+    const CHECKIN_TIME = 15 * 60;
     const tasks = [
       "on",
       "toan_hoc",
@@ -320,17 +357,16 @@
     }
     localStorage.setItem("lastCheck", today);
 
-    // 15 phút đếm ngược điểm danh
-    const CHECKIN_TIME = 15 * 60; // 15 phút (giây)
-    let checkinStart = parseInt(localStorage.getItem("checkinStart")) || 0;
-    let checkinTimerId = null;
+    function updateScoreDisplay() {
+      document.getElementById("score").textContent = `${diem} / ${TOTAL_SCORE}`;
+      updateProgress();
+    }
 
     function updateProgress() {
       const milestone = getCurrentMilestone();
       const nextMilestone = getNextMilestone();
 
       if (!nextMilestone) {
-        // Đã vượt mốc cao nhất
         document.getElementById(
           "progress"
         ).innerText = `Điểm hiện tại: ${diem} / ${TOTAL_SCORE} (Đạt mốc cao nhất!) 🎉`;
@@ -347,17 +383,6 @@
         "bonusScoreBox"
       ).innerText = `Tổng điểm từ điểm tốt: ${diemThuong}`;
 
-      // Hiện phần thưởng đạt được
-      let rewardsText = "🎁 Phần thưởng đã nhận:\n";
-      milestones.forEach(({ score, label }) => {
-        if (diem >= score) {
-          rewardsText += `✔️ ${label}\n`;
-        }
-      });
-
-      // Có thể thêm phần thưởng lên UI nếu muốn
-      // alert nếu đạt mốc mới? (Có thể thêm tính năng này)
-
       updateBonusStats();
       renderMissedTasks();
 
@@ -366,7 +391,6 @@
       }
     }
 
-    // Tìm mốc phần thưởng hiện tại dựa trên điểm
     function getCurrentMilestone() {
       let current = null;
       for (let i = milestones.length - 1; i >= 0; i--) {
@@ -378,7 +402,6 @@
       return current;
     }
 
-    // Tìm mốc tiếp theo
     function getNextMilestone() {
       for (let i = 0; i < milestones.length; i++) {
         if (diem < milestones[i].score) return milestones[i];
@@ -394,11 +417,10 @@
       done[today] = doneToday;
       localStorage.setItem("diem", diem);
       localStorage.setItem("done", JSON.stringify(done));
-      updateProgress();
+      updateScoreDisplay();
       renderCalendar();
     }
 
-    // Hàm điểm danh có 15 phút đếm ngược
     function startCheckinTimer() {
       if (done[today] && done[today]["diemdanh"]) {
         alert("Bạn đã điểm danh hôm nay rồi!");
@@ -430,9 +452,7 @@
           clearInterval(checkinTimerId);
           document.getElementById("diemDanhBtn").disabled = false;
         } else {
-          let min = Math.floor(remain / 60)
-            .toString()
-            .padStart(2, "0");
+          let min = Math.floor(remain / 60).toString().padStart(2, "0");
           let sec = (remain % 60).toString().padStart(2, "0");
           countdownElem.innerText = `⏳ Thời gian học: ${min}:${sec}`;
           document.getElementById("diemDanhBtn").disabled = true;
@@ -456,7 +476,7 @@
       localStorage.setItem("bonusStats", JSON.stringify(bonusStats));
       localStorage.setItem("diem", diem);
       alert(`+${diemCong} điểm từ học thêm!`);
-      updateProgress();
+      updateScoreDisplay();
       document.getElementById("hocThemPhut").value = "";
     }
 
@@ -472,9 +492,19 @@
       diemThuong += cong;
       localStorage.setItem("diem", diem);
       localStorage.setItem("diemThuong", diemThuong);
-      updateProgress();
+      updateScoreDisplay();
       alert(`+${cong} điểm thưởng từ điểm ${val}`);
       document.getElementById("diemSo").value = "";
+    }
+
+    function addScore() {
+      let add = parseInt(document.getElementById("addPoints").value);
+      if (!isNaN(add)) {
+        diem += add;
+        localStorage.setItem("diem", diem);
+        updateScoreDisplay();
+        document.getElementById("addPoints").value = "";
+      }
     }
 
     function updateBonusStats() {
@@ -540,7 +570,7 @@
       localStorage.setItem("diem", diem);
       localStorage.setItem("done", JSON.stringify(done));
       alert(`Đã làm bù ${missedTasks.length} nhiệm vụ ngày ${day} (+${added} điểm)`);
-      updateProgress();
+      updateScoreDisplay();
       renderCalendar();
     }
 
@@ -561,7 +591,7 @@
           localStorage.setItem("diem", diem);
           localStorage.setItem("done", JSON.stringify(done));
           alert("Đã xóa nhiệm vụ hôm nay và trừ điểm tương ứng.");
-          updateProgress();
+          updateScoreDisplay();
           renderCalendar();
         }
       }
@@ -596,20 +626,52 @@
           now.getHours().toString().padStart(2, "0") +
           ":" +
           now.getMinutes().toString().padStart(2, "0");
-        if (nowStr === t) {
+        if (nowStr === t && lastNotification !== today) {
           new Notification("⏰ Đến giờ học rồi! Hãy hoàn thành mục tiêu hôm nay nhé.");
+          localStorage.setItem("lastNotification", today);
         }
       }, 60000);
     }
 
+    function updateTimerDisplay() {
+      let hours = String(Math.floor(elapsedSeconds / 3600)).padStart(2, "0");
+      let minutes = String(Math.floor((elapsedSeconds % 3600) / 60)).padStart(2, "0");
+      let seconds = String(elapsedSeconds % 60).padStart(2, "0");
+      document.getElementById("timer").textContent = `${hours}:${minutes}:${seconds}`;
+    }
+
+    function startTimer() {
+      if (!running) {
+        running = true;
+        localStorage.setItem("timerRunning", "true");
+        timerInterval = setInterval(() => {
+          elapsedSeconds++;
+          localStorage.setItem("elapsedSeconds", elapsedSeconds);
+          updateTimerDisplay();
+        }, 1000);
+      }
+    }
+
+    function stopTimer() {
+      if (running) {
+        running = false;
+        localStorage.setItem("timerRunning", "false");
+        clearInterval(timerInterval);
+        localStorage.setItem("elapsedSeconds", elapsedSeconds);
+      }
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
-      updateProgress();
+      updateScoreDisplay();
+      updateTimerDisplay();
       renderCalendar();
       startReminderCheck();
       document.getElementById("dailyQuote").innerText = quotes[new Date().getDate() % quotes.length];
-
       if (checkinStart !== 0) {
         startCountdown();
+      }
+      if (running) {
+        startTimer();
       }
     });
   </script>
