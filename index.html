@@ -1,679 +1,810 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Mục Tiêu Học Tập</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-image: url('mid.png');
-      background-size: cover;
-      background-position: center;
-      color: #fff;
-      text-align: center;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 40px 15px;
-    }
-    .container {
-      background: rgba(0, 0, 0, 0.75);
-      padding: 30px 30px 40px;
-      max-width: 960px;
-      width: 100%;
-      border-radius: 20px;
-      box-shadow: 0 0 30px rgba(0,0,0,0.9);
-    }
-    h1 {
-      font-weight: 700;
-      font-size: 2.4rem;
-      margin-bottom: 15px;
-      text-shadow: 1px 1px 6px #4caf50cc;
-    }
-    img {
-      width: 100%;
-      max-width: 400px;
-      border-radius: 15px;
-      margin: 10px auto 30px;
-      display: block;
-      box-shadow: 0 0 20px #4caf5077;
-    }
-    #progress {
-      font-size: 1.4rem;
-      margin-bottom: 20px;
-      font-weight: 600;
-      color: #a5d6a7;
-      text-shadow: 0 0 5px #388e3c;
-    }
-    #bonusScoreBox {
-      font-size: 1.1rem;
-      margin-bottom: 25px;
-      font-weight: 500;
-      color: #ffd54f;
-      text-shadow: 0 0 3px #fbc02d;
-    }
-    button {
-      margin: 5px 7px 10px 7px;
-      padding: 10px 22px;
-      font-size: 16px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      background-color: #4caf50;
-      color: white;
-      transition: background-color 0.3s ease;
-      box-shadow: 0 4px 8px #388e3caa;
-    }
-    button:hover:not(:disabled) {
-      background-color: #388e3c;
-    }
-    button:disabled {
-      background-color: #666;
-      cursor: not-allowed;
-      box-shadow: none;
-    }
-    #countdownTimer {
-      margin-top: 10px;
-      font-size: 1.3rem;
-      color: #ffd54f;
-      font-weight: 700;
-      text-shadow: 0 0 6px #fbc02d;
-      min-height: 30px;
-    }
-    h3 {
-      margin-top: 30px;
-      margin-bottom: 12px;
-      font-weight: 700;
-      color: #81c784;
-      text-shadow: 0 0 3px #4caf50cc;
-    }
-    input[type="number"], input[type="time"], textarea {
-      padding: 8px 12px;
-      border-radius: 8px;
-      border: none;
-      font-size: 16px;
-      outline: none;
-      margin-right: 10px;
-      box-shadow: 0 0 5px #4caf5077;
-      width: 130px;
-      max-width: 90%;
-      background: #2e7d32cc;
-      color: #e8f5e9;
-      transition: background-color 0.3s ease;
-    }
-    input[type="number"]:focus, input[type="time"]:focus, textarea:focus {
-      background: #4caf5088;
-      color: #fff;
-    }
-    #daily-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px 20px;
-    }
-    #daily-buttons > h3 {
-      flex-basis: 100%;
-      margin-bottom: 8px;
-      margin-top: 24px;
-      text-align: left;
-    }
-    #daily-buttons > button {
-      flex: 1 1 140px;
-      max-width: 160px;
-    }
-    #hocThemStats, #missedTasksList {
-      background: #ffffff20;
-      padding: 15px;
-      border-radius: 15px;
-      color: #dcedc8;
-      font-size: 1.1rem;
-      max-width: 900px;
-      margin: 25px auto 0;
-      text-align: left;
-      box-shadow: 0 0 12px #aed581bb;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 30px;
-      background: #ffffff10;
-      border-radius: 10px;
-      overflow-x: auto;
-      color: #dcedc8;
-      box-shadow: 0 0 20px #81c78466;
-    }
-    th, td {
-      border: 1px solid #ffffff30;
-      padding: 10px;
-      vertical-align: top;
-    }
-    th {
-      background: #4caf5088;
-      font-weight: 700;
-      font-size: 1rem;
-    }
-    textarea {
-      background: #2e7d32cc;
-      color: #e8f5e9;
-      border-radius: 8px;
-      resize: vertical;
-      min-height: 50px;
-      width: 100%;
-      font-size: 15px;
-      padding: 6px 10px;
-      border: none;
-      outline: none;
-      box-shadow: inset 0 0 6px #4caf50aa;
-    }
-    label {
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: #a5d6a7;
-      user-select: none;
-    }
-    .danger-btn {
-      background-color: #f44336;
-      box-shadow: 0 4px 8px #d32f2faa;
-    }
-    .danger-btn:hover {
-      background-color: #d32f2f;
-    }
-    .secondary-btn {
-      background-color: #e91e63;
-      box-shadow: 0 4px 8px #c2185baa;
-    }
-    .secondary-btn:hover {
-      background-color: #c2185b;
-    }
-    .score-box, .timer-box {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
-      margin-bottom: 20px;
-      display: inline-block;
-      color: #000; /* Sửa màu chữ thành đen để hiển thị rõ trên nền trắng */
-    }
-    .score-box h2, .timer-box h2 {
-      color: #000; /* Đảm bảo tiêu đề hiển thị rõ */
-    }
-    .time {
-      font-size: 2em;
-      margin-top: 10px;
-      color: #000; /* Sửa màu chữ timer thành đen */
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Identity Card System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', 'Arial', 'Helvetica', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .left-panel {
+            border-right: 2px solid #e0e0e0;
+            padding-right: 30px;
+        }
+
+        .section {
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .info-group {
+            margin-bottom: 15px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .info-value {
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            border-left: 3px solid #667eea;
+        }
+
+        .info-value input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .upload-box {
+            text-align: center;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .upload-box:hover {
+            transform: scale(1.02);
+        }
+
+        .logo-upload {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            border: 3px solid #1e3c72;
+            overflow: hidden;
+        }
+
+        .photo-upload {
+            width: 90px;
+            height: 120px;
+            margin: 0 auto;
+            background: #f0f4f8;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            font-size: 11px;
+            border: 2px solid #cbd5e1;
+            overflow: hidden;
+        }
+
+        .signature-upload {
+            width: 120px;
+            height: 50px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            font-size: 11px;
+            border: 1px dashed #cbd5e1;
+            overflow: hidden;
+        }
+
+        .upload-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* ID CARD STYLES */
+        .id-card-wrapper {
+            perspective: 1000px;
+        }
+
+        .id-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2), 0 0 0 3px #e5e7eb, 0 0 0 5px white;
+            position: relative;
+            border: 2px solid #cbd5e1;
+        }
+
+        /* Hologram effect */
+        .hologram-strip {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100%;
+            background: linear-gradient(45deg,
+                transparent 30%,
+                rgba(255, 215, 0, 0.3) 35%,
+                rgba(255, 105, 180, 0.3) 40%,
+                rgba(0, 191, 255, 0.3) 45%,
+                transparent 50%);
+            pointer-events: none;
+            opacity: 0.4;
+            z-index: 5;
+        }
+
+        .card-header {
+            background: linear-gradient(180deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            width: 55px;
+            height: 55px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            border: 2px solid white;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .header-text {
+            flex: 1;
+            text-align: center;
+        }
+
+        .college-name {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 3px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .university-name {
+            font-size: 10px;
+            opacity: 0.95;
+            margin-bottom: 2px;
+            font-weight: 400;
+        }
+
+        .card-type {
+            background: #dc2626;
+            color: white;
+            padding: 5px 10px;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .card-body {
+            background: linear-gradient(to bottom, #ffffff 0%, #fafafa 100%);
+            padding: 18px;
+            display: grid;
+            grid-template-columns: 135px 1fr;
+            gap: 18px;
+        }
+
+        .photo-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .photo-frame {
+            width: 100%;
+            height: 160px;
+            background: linear-gradient(135deg, #f0f4f8 0%, #e0e7ef 100%);
+            border: 2.5px solid #1e3c72;
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.08);
+            position: relative;
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .signature-area {
+            margin-top: 10px;
+            height: 35px;
+            border-top: 1px solid #000;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .signature-area img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .signature-label {
+            font-size: 7px;
+            text-align: center;
+            color: #64748b;
+            font-weight: 500;
+            margin-top: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .student-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 7px;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: baseline;
+            font-size: 10.5px;
+            padding: 5px 0;
+            border-bottom: 1px dotted #cbd5e1;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .label {
+            font-weight: 600;
+            color: #1f2937;
+            min-width: 75px;
+            text-transform: uppercase;
+            font-size: 8.5px;
+            letter-spacing: 0.4px;
+        }
+
+        .value {
+            color: #374151;
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .card-footer {
+            background: white;
+            padding: 12px 18px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .validity-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 8.5px;
+            color: #475569;
+            margin-bottom: 10px;
+            font-weight: 500;
+            padding: 6px 10px;
+            background: #f8fafc;
+            border-radius: 4px;
+        }
+
+        .qr-barcode-section {
+            display: grid;
+            grid-template-columns: 70px 1fr;
+            gap: 15px;
+            margin-bottom: 12px;
+        }
+
+        .qr-code {
+            width: 70px;
+            height: 70px;
+            background: white;
+            border: 1px solid #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .qr-code img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .barcode-area {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .barcode-lines {
+            display: inline-flex;
+            gap: 2px;
+            height: 45px;
+            margin-bottom: 4px;
+        }
+
+        .barcode-lines span {
+            width: 2px;
+            background: #000;
+            display: inline-block;
+        }
+
+        .barcode-lines span:nth-child(2n) {
+            height: 45px;
+        }
+
+        .barcode-lines span:nth-child(2n+1) {
+            height: 38px;
+        }
+
+        .barcode-number {
+            font-size: 9px;
+            font-family: 'Courier New', monospace;
+            color: #1f2937;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+            margin-top: 3px;
+        }
+
+        .signatures {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 10px;
+            border-top: 1px solid #e5e7eb;
+            gap: 10px;
+        }
+
+        .signature-block {
+            text-align: center;
+            flex: 1;
+        }
+
+        .signature-space {
+            width: 100%;
+            height: 30px;
+            border-bottom: 1px solid #000;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .signature-space img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .signature-title {
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            font-size: 7.5px;
+        }
+
+        .serial-number {
+            position: absolute;
+            top: 6px;
+            right: 12px;
+            font-size: 7px;
+            color: rgba(0,0,0,0.4);
+            font-family: 'Courier New', monospace;
+            z-index: 6;
+            font-weight: 700;
+        }
+
+        .issuer-text {
+            text-align: center;
+            font-size: 8px;
+            color: #64748b;
+            margin-top: 8px;
+            font-weight: 500;
+            font-style: italic;
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+            transition: all 0.3s;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(30, 60, 114, 0.4);
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .container {
+                grid-template-columns: 1fr;
+                box-shadow: none;
+            }
+            .left-panel {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            .left-panel {
+                border-right: none;
+                border-bottom: 2px solid #e0e0e0;
+                padding-right: 0;
+                padding-bottom: 20px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🎯 Mục tiêu học tập đến ngày thi 15/06/2026</h1>
-    <img src="Xiaomi-Mi-11-Ultra.jpg" alt="Phần thưởng" />
+    <div class="container">
+        <div class="left-panel">
+            <div class="section">
+                <div class="section-title">School Information</div>
+                <div class="info-group">
+                    <div class="info-label">Official School Logo</div>
+                    <div class="info-value">
+                        <div class="upload-box" onclick="document.getElementById('logoUpload').click()">
+                            <div class="logo-upload" id="logoPreview">
+                                <span style="font-size: 12px; color: #94a3b8;">Upload Logo</span>
+                            </div>
+                            <input type="file" id="logoUpload" accept="image/*" style="display: none;">
+                            <div style="margin-top: 8px; font-size: 10px; color: #666;">Official logo only</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">School Name</div>
+                    <div class="info-value">
+                        <input type="text" id="schoolName" value="SHRI RAM COLLEGE OF COMMERCE" placeholder="Full school name">
+                    </div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">University</div>
+                    <div class="info-value">
+                        <input type="text" id="university" value="University of Delhi" placeholder="University name">
+                    </div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Address & Contact</div>
+                    <div class="info-value">
+                        <input type="text" id="address" value="Delhi-110007 | Phone: 011-27662319" placeholder="Full address">
+                    </div>
+                </div>
+            </div>
 
-    <p id="progress">Điểm hiện tại: 0 / 2000</p>
-    <div id="bonusScoreBox"></div>
+            <div class="section">
+                <div class="section-title">Student Information</div>
+                <div class="info-group">
+                    <div class="info-label">Student Photo (3x4, White/Light Blue Background)</div>
+                    <div class="info-value">
+                        <div class="upload-box" onclick="document.getElementById('photoUpload').click()">
+                            <div class="photo-upload" id="photoPreviewSide">Upload Photo</div>
+                            <input type="file" id="photoUpload" accept="image/*" style="display: none;">
+                            <div style="margin-top: 8px; font-size: 10px; color: #666;">Passport-style photo</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Student Signature (Handwritten, scanned)</div>
+                    <div class="info-value">
+                        <div class="upload-box" onclick="document.getElementById('signatureUpload').click()">
+                            <div class="signature-upload" id="signaturePreviewSide">Upload Signature</div>
+                            <input type="file" id="signatureUpload" accept="image/*" style="display: none;">
+                            <div style="margin-top: 8px; font-size: 10px; color: #666;">Scan of signature</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Full Name (as per records)</div>
+                    <div class="info-value">
+                        <input type="text" id="studentName" value="AYUSHI GOEL" placeholder="Full legal name">
+                    </div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Father's Name</div>
+                    <div class="info-value">
+                        <input type="text" id="fatherName" value="MR. RAJESH KUMAR GOEL" placeholder="Father's full name">
+                    </div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Program / Course</div>
+                    <div class="info-value">
+                        <input type="text" id="program" value="Post Graduate Diploma in Global Business Operations" placeholder="Full program name">
+                    </div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Class / Year</div>
+                    <div class="info-value">
+                        <input type="text" id="className" value="Second Year" placeholder="Class or year">
+                    </div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Student ID Number</div>
+                    <div class="info-value">
+                        <input type="text" id="studentID" value="SRCC/GBO/2025/006" placeholder="Full student ID">
+                    </div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Roll Number</div>
+                    <div class="info-value">
+                        <input type="text" id="rollNo" value="GBO-2Y-006" placeholder="Roll number">
+                    </div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Date of Birth</div>
+                    <div class="info-value">
+                        <input type="text" id="dob" value="15/08/2003" placeholder="DD/MM/YYYY">
+                    </div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Blood Group</div>
+                    <div class="info-value">
+                        <input type="text" id="bloodGroup" value="O+" placeholder="Blood group">
+                    </div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Mobile Number</div>
+                    <div class="info-value">
+                        <input type="text" id="mobile" value="+91 98123 45678" placeholder="Active mobile number">
+                    </div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Valid Until</div>
+                    <div class="info-value">
+                        <input type="text" id="validUntil" value="31/05/2027" placeholder="DD/MM/YYYY">
+                    </div>
+                </div>
+            </div>
 
-    <div id="dailyQuote" style="font-style: italic; font-size:1.3rem; margin-bottom: 15px;"></div>
+            <div class="section">
+                <div class="section-title">Authority Signatures</div>
+                <div class="info-group">
+                    <div class="info-label">Course Coordinator Signature</div>
+                    <div class="info-value">
+                        <div class="upload-box" onclick="document.getElementById('coordinatorSigUpload').click()">
+                            <div class="signature-upload" id="coordinatorSigPreview">Upload Signature</div>
+                            <input type="file" id="coordinatorSigUpload" accept="image/*" style="display: none;">
+                        </div>
+                    </div>
+                </div>
+                <div class="info-group">
+                    <div class="info-label">Principal Signature</div>
+                    <div class="info-value">
+                        <div class="upload-box" onclick="document.getElementById('principalSigUpload').click()">
+                            <div class="signature-upload" id="principalSigPreview">Upload Signature</div>
+                            <input type="file" id="principalSigUpload" accept="image/*" style="display: none;">
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <div id="daily-buttons">
-      <h3>📅 Điểm danh & Học tập</h3>
-      <button onclick="startCheckinTimer()" id="diemDanhBtn">Điểm danh hôm nay (+5)</button>
-      <div id="countdownTimer"></div>
+            <button class="download-btn" onclick="updateCard()">🔄 Update Card Preview</button>
+            <button class="download-btn" onclick="window.print()">📥 Print Identity Card</button>
+        </div>
 
-      <h3>🧮 Toán</h3>
-      <button onclick="congDiem('toan_hoc', 5)">Học Toán (+5)</button>
-      <button onclick="congDiem('toan_cauhoi', 5)">Làm 50 câu hỏi Toán (+5)</button>
+        <div class="right-panel">
+            <div class="id-card-wrapper">
+                <div class="id-card">
+                    <div class="hologram-strip"></div>
+                    <div class="serial-number" id="cardSerialDisplay">SN: SRCC-2025-000006</div>
+                    
+                    <div class="card-header">
+                        <div class="logo" id="cardLogo1">
+                            <span style="font-size: 24px;">🎓</span>
+                        </div>
+                        <div class="header-text">
+                            <div class="college-name" id="cardSchoolName">SHRI RAM COLLEGE OF COMMERCE</div>
+                            <div class="university-name" id="cardUniversity">University of Delhi</div>
+                            <div class="university-name" id="cardAddress">Delhi-110007 | Phone: 011-27662319</div>
+                        </div>
+                        <div class="logo" id="cardLogo2">
+                            <span style="font-size: 24px;">🎓</span>
+                        </div>
+                    </div>
 
-      <h3>🔭 Lý</h3>
-      <button onclick="congDiem('ly_hoc', 5)">Học Lý (+5)</button>
-      <button onclick="congDiem('ly_cauhoi', 5)">Làm 50 câu hỏi Lý (+5)</button>
+                    <div class="card-type">STUDENT IDENTITY CARD 2025-2027</div>
 
-      <h3>⚗️ Hóa</h3>
-      <button onclick="congDiem('hoa_hoc', 5)">Học Hóa (+5)</button>
-      <button onclick="congDiem('hoa_cauhoi', 5)">Làm 50 câu hỏi Hóa (+5)</button>
+                    <div class="card-body">
+                        <div class="photo-section">
+                            <div class="photo-frame" onclick="document.getElementById('photoUpload').click()">
+                                <span id="photoPreviewCard" style="font-size: 10px; color: #94a3b8; text-align: center;">Student<br>Photo</span>
+                            </div>
+                            <div class="signature-area" onclick="document.getElementById('signatureUpload').click()">
+                                <span id="signaturePreviewCard" style="font-size: 9px; color: #cbd5e1;">Signature</span>
+                            </div>
+                            <div class="signature-label">Student Signature</div>
+                        </div>
 
-      <h3>🇬🇧 Tiếng Anh</h3>
-      <button onclick="congDiem('anh_nguPhap', 5)">Học ngữ pháp (+5)</button>
-      <button onclick="congDiem('anh_tuVung', 5)">Học 5 từ vựng mới (+5)</button>
-  
+                        <div class="student-info">
+                            <div class="info-row">
+                                <span class="label">Name:</span>
+                                <span class="value" id="cardStudentName">AYUSHI GOEL</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Father's:</span>
+                                <span class="value" id="cardFatherName">MR. RAJESH KUMAR GOEL</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Program:</span>
+                                <span class="value" id="cardProgram">PG Diploma - Global Business Operations</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Class:</span>
+                                <span class="value" id="cardClassName">Second Year</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">ID Number:</span>
+                                <span class="value" id="cardStudentID">SRCC/GBO/2025/006</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Roll No:</span>
+                                <span class="value" id="cardRollNo">GBO-2Y-006</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">DOB:</span>
+                                <span class="value" id="cardDOB">15/08/2003</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Blood:</span>
+                                <span class="value" id="cardBloodGroup">O+</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Mobile:</span>
+                                <span class="value" id="cardMobile">+91 98123 45678</span>
+                            </div>
+                        </div>
+                    </div>
 
-      <h3>📚 Ôn tập</h3>
-      <button onclick="congDiem('on', 20)">Ôn tập kiến thức (+20)</button>
+                    <div class="card-footer">
+                        <div class="validity-info">
+                            <span><strong>Issue Date:</strong> 01/05/2025</span>
+                            <span><strong>Valid Until:</strong> <span id="cardValidUntil">31/05/2027</span></span>
+                        </div>
 
-      <h3>🚀 Học thêm</h3>
-      <input type="number" id="hocThemPhut" placeholder="Phút học thêm" min="1" />
-      <button onclick="hocThem()">Cộng điểm học thêm</button>
+                        <div class="qr-barcode-section">
+                            <div class="qr-code" id="qrCodeArea">
+                                <canvas id="qrCanvas" width="70" height="70"></canvas>
+                            </div>
+                            <div class="barcode-area">
+                                <div class="barcode-lines">
+                                    <span></span><span></span><span></span><span></span>
+                                    <span></span><span></span><span></span><span></span>
+                                    <span></span><span></span><span></span><span></span>
+                                    <span></span><span></span><span></span><span></span>
+                                    <span></span><span></span><span></span><span></span>
+                                    <span></span><span></span><span></span><span></span>
+                                </div>
+                                <div class="barcode-number" id="cardBarcodeNumber">*SRCC2025000006*</div>
+                            </div>
+                        </div>
+
+                        <div class="signatures">
+                            <div class="signature-block">
+                                <div class="signature-space" onclick="document.getElementById('coordinatorSigUpload').click()">
+                                    <span id="coordinatorSigCard" style="font-size: 9px; color: #cbd5e1;">Sign</span>
+                                </div>
+                                <div class="signature-title">Course Coordinator</div>
+                            </div>
+                            <div class="signature-block">
+                                <div class="signature-space" onclick="document.getElementById('principalSigUpload').click()">
+                                    <span id="principalSigCard" style="font-size: 9px; color: #cbd5e1;">Sign</span>
+                                </div>
+                                <div class="signature-title">Principal</div>
+                            </div>
+                        </div>
+
+                        <div class="issuer-text">Issued by SRCC Administration, University of Delhi</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px; padding: 15px; background: #e0f2fe; border-radius: 8px; border-left: 4px solid #0284c7;">
+                <h3 style="color: #0c4a6e; font-size: 13px; margin-bottom: 10px; font-weight: 600;">✅ Requirements Met</h3>
+                <ul style="font-size: 11px; color: #0c4a6e; line-height: 1.8; padding-left: 20px; font-weight: 400;">
+                    <li>Official logo and school name</li>
+                    <li>Student photo with proper background</li>
+                    <li>Handwritten signatures (student & authorities)</li>
+                    <li>QR code for verification</li>
+                    <li>Scannable barcode with ID number</li>
+                    <li>Hologram security strip</li>
+                    <li>Complete student ID (SRCC/GBO/2025/006)</li>
+                    <li>Full program name displayed</li>
+                    <li>Valid dates within 90 days</li>
+                    <li>Professional border and design</li>
+                </ul>
+            </div>
+        </div>
     </div>
 
-    <div id="hocThemStats"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script>
+        let logoData = null;
+        let photoData = null;
+        let signatureData = null;
+        let coordinatorSigData = null;
+        let principalSigData = null;
 
-    <div style="margin-top:30px;">
-      <h3>🏆 Thêm điểm khi đạt điểm tốt</h3>
-      <input type="number" id="diemSo" min="7" max="10" placeholder="Nhập điểm 7-10" />
-      <button onclick="themDiemSo()">+ Điểm thưởng</button>
-    </div>
-    <div class="score-box">
-      <h2>Điểm hiện tại</h2>
-      <p id="score">0 / 20000</p>
-      <input type="number" id="addPoints" placeholder="Nhập điểm hôm nay" />
-      <button onclick="addScore()">➕ Cộng điểm</button>
-    </div>
-
-    <div class="timer-box">
-      <h2>⏱ Bấm giờ</h2>
-      <div class="time" id="timer">00:00:00</div>
-      <button onclick="startTimer()">Bắt đầu</button>
-      <button onclick="stopTimer()">Dừng lại</button>
-    </div>
-
-    <div style="margin-top: 20px;">
-      <label>
-        ⏰ Nhắc giờ học:
-        <input type="time" id="reminderTime" />
-        <button onclick="setReminder()">Lưu</button>
-      </label>
-    </div>
-
-    <div style="margin-top: 15px;">
-      <button class="danger-btn" onclick="xoaLichHomNay()">🗑️ Xóa dữ liệu hôm nay</button>
-      <button class="secondary-btn" onclick="xoaGhiChuHomNay()">📜 Xóa ghi chú hôm nay</button>
-    </div>
-
-    <div id="missedTasksList"></div>
-
-    <div style="margin-top: 40px;">
-      <h2>🗓️ Lịch học & Ghi chú</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Ngày</th>
-            <th>Nhiệm vụ</th>
-            <th>Ghi chú</th>
-          </tr>
-        </thead>
-        <tbody id="calendarBody"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <script>
-    const TOTAL_SCORE = 20000;
-    const milestones = [
-      { score: 2000, label: "Mua đồ ăn yêu thích 🍜" },
-      { score: 4000, label: "Mua món đồ bạn yêu thích 🧸" },
-      { score: 6000, label: "Xiaomi Mi 11 Ultra 📱" },
-      { score: 10000, label: "Xiaomi Mi 13 Pro 🚀" },
-      { score: 20000, label: "🔥 Xiaomi 16 Pro Max (siêu quà) 🔥" },
-    ];
-
-    let diem = parseInt(localStorage.getItem("diem")) || 0;
-    let diemThuong = parseInt(localStorage.getItem("diemThuong")) || 0;
-    let bonusStats = JSON.parse(localStorage.getItem("bonusStats")) || {};
-    let today = new Date().toISOString().split("T")[0];
-    let done = JSON.parse(localStorage.getItem("done")) || {};
-    let notes = JSON.parse(localStorage.getItem("notes")) || {};
-    let lastCheck = localStorage.getItem("lastCheck") || "";
-    let checkinStart = parseInt(localStorage.getItem("checkinStart")) || 0;
-    let checkinTimerId = null;
-    let timerInterval = null;
-    let elapsedSeconds = parseInt(localStorage.getItem("elapsedSeconds")) || 0;
-    let running = localStorage.getItem("timerRunning") === "true";
-    let lastNotification = localStorage.getItem("lastNotification") || "";
-    const CHECKIN_TIME = 15 * 60;
-    const tasks = [
-      "on",
-      "toan_hoc",
-      "toan_cauhoi",
-      "ly_hoc",
-      "ly_cauhoi",
-      "hoa_hoc",
-      "hoa_cauhoi",
-      "anh_nguPhap",
-      "anh_tuVung",
-      "anh_nghe",
-      "diemdanh",
-    ];
-    const quotes = [
-      "📚 Hôm nay bạn học gì rồi? Cố gắng lên nhé!",
-      "🚀 Mỗi ngày một bước, bạn sẽ tiến xa!",
-      "💡 Học hôm nay - Thành công ngày mai!",
-      "🔥 Đừng để ngày hôm nay trôi qua vô ích!",
-      "🌱 Tri thức là sức mạnh, cố lên bạn nhé!",
-    ];
-
-    // Kiểm tra điểm danh ngày trước, trừ điểm nếu nhiệm vụ chưa làm
-    if (lastCheck && lastCheck !== today) {
-      const missed = done[lastCheck] || {};
-      tasks.forEach((task) => {
-        if (!missed[task]) diem -= task === "on" ? 20 : 5;
-      });
-      diem = Math.max(0, diem);
-      localStorage.setItem("diem", diem);
-      localStorage.setItem(
-        "missedTasks_" + lastCheck,
-        JSON.stringify(tasks.filter((task) => !missed[task]))
-      );
-    }
-    localStorage.setItem("lastCheck", today);
-
-    function updateScoreDisplay() {
-      document.getElementById("score").textContent = `${diem} / ${TOTAL_SCORE}`;
-      updateProgress();
-    }
-
-    function updateProgress() {
-      const milestone = getCurrentMilestone();
-      const nextMilestone = getNextMilestone();
-
-      if (!nextMilestone) {
-        document.getElementById(
-          "progress"
-        ).innerText = `Điểm hiện tại: ${diem} / ${TOTAL_SCORE} (Đạt mốc cao nhất!) 🎉`;
-      } else {
-        const currentBase = milestone ? milestone.score : 0;
-        const currentProgress = diem - currentBase;
-        const needed = nextMilestone.score - currentBase;
-        document.getElementById(
-          "progress"
-        ).innerText = `Điểm hiện tại: ${currentProgress} / ${needed} (Tiến đến: ${nextMilestone.label})`;
-      }
-
-      document.getElementById(
-        "bonusScoreBox"
-      ).innerText = `Tổng điểm từ điểm tốt: ${diemThuong}`;
-
-      updateBonusStats();
-      renderMissedTasks();
-
-      if (diem >= TOTAL_SCORE) {
-        alert("🎉 Chúc mừng bạn đã đạt được phần thưởng cao nhất: Xiaomi 16 Pro Max!");
-      }
-    }
-
-    function getCurrentMilestone() {
-      let current = null;
-      for (let i = milestones.length - 1; i >= 0; i--) {
-        if (diem >= milestones[i].score) {
-          current = milestones[i];
-          break;
-        }
-      }
-      return current;
-    }
-
-    function getNextMilestone() {
-      for (let i = 0; i < milestones.length; i++) {
-        if (diem < milestones[i].score) return milestones[i];
-      }
-      return null;
-    }
-
-    function congDiem(task, amount) {
-      let doneToday = done[today] || {};
-      if (doneToday[task]) return alert("Bạn đã làm nhiệm vụ này hôm nay rồi!");
-      diem += amount;
-      doneToday[task] = true;
-      done[today] = doneToday;
-      localStorage.setItem("diem", diem);
-      localStorage.setItem("done", JSON.stringify(done));
-      updateScoreDisplay();
-      renderCalendar();
-    }
-
-    function startCheckinTimer() {
-      if (done[today] && done[today]["diemdanh"]) {
-        alert("Bạn đã điểm danh hôm nay rồi!");
-        return;
-      }
-      if (checkinStart === 0) {
-        checkinStart = Date.now();
-        localStorage.setItem("checkinStart", checkinStart);
-        startCountdown();
-      } else {
-        alert("Bạn đang trong thời gian học 15 phút, vui lòng hoàn thành để được điểm danh.");
-      }
-    }
-
-    function startCountdown() {
-      const countdownElem = document.getElementById("countdownTimer");
-      if (checkinTimerId) clearInterval(checkinTimerId);
-
-      function update() {
-        let now = Date.now();
-        let elapsed = Math.floor((now - checkinStart) / 1000);
-        let remain = CHECKIN_TIME - elapsed;
-
-        if (remain <= 0) {
-          congDiem("diemdanh", 5);
-          countdownElem.innerText = "🎉 Đã hoàn thành 15 phút học, điểm danh +5 điểm!";
-          localStorage.removeItem("checkinStart");
-          checkinStart = 0;
-          clearInterval(checkinTimerId);
-          document.getElementById("diemDanhBtn").disabled = false;
-        } else {
-          let min = Math.floor(remain / 60).toString().padStart(2, "0");
-          let sec = (remain % 60).toString().padStart(2, "0");
-          countdownElem.innerText = `⏳ Thời gian học: ${min}:${sec}`;
-          document.getElementById("diemDanhBtn").disabled = true;
-        }
-      }
-      update();
-      checkinTimerId = setInterval(update, 1000);
-    }
-
-    function hocThem() {
-      let minutes = parseInt(document.getElementById("hocThemPhut").value);
-      if (isNaN(minutes) || minutes <= 0)
-        return alert("Nhập số phút hợp lệ!");
-      let diemCong = Math.min(30, Math.floor(minutes / 2));
-      diem += diemCong;
-      let date = new Date();
-      let keyWeek = getWeekNumber(date);
-      let keyMonth = date.getMonth();
-      bonusStats[keyWeek] = (bonusStats[keyWeek] || 0) + diemCong;
-      bonusStats["m" + keyMonth] = (bonusStats["m" + keyMonth] || 0) + diemCong;
-      localStorage.setItem("bonusStats", JSON.stringify(bonusStats));
-      localStorage.setItem("diem", diem);
-      alert(`+${diemCong} điểm từ học thêm!`);
-      updateScoreDisplay();
-      document.getElementById("hocThemPhut").value = "";
-    }
-
-    function themDiemSo() {
-      let val = parseInt(document.getElementById("diemSo").value);
-      let cong = 0;
-      if (val === 7) cong = 5;
-      else if (val === 8) cong = 10;
-      else if (val === 9) cong = 15;
-      else if (val === 10) cong = 20;
-      else return alert("Chỉ nhận điểm từ 7 đến 10");
-      diem += cong;
-      diemThuong += cong;
-      localStorage.setItem("diem", diem);
-      localStorage.setItem("diemThuong", diemThuong);
-      updateScoreDisplay();
-      alert(`+${cong} điểm thưởng từ điểm ${val}`);
-      document.getElementById("diemSo").value = "";
-    }
-
-    function addScore() {
-      let add = parseInt(document.getElementById("addPoints").value);
-      if (!isNaN(add)) {
-        diem += add;
-        localStorage.setItem("diem", diem);
-        updateScoreDisplay();
-        document.getElementById("addPoints").value = "";
-      }
-    }
-
-    function updateBonusStats() {
-      let now = new Date();
-      let w = getWeekNumber(now);
-      let m = "m" + now.getMonth();
-      let week = bonusStats[w] || 0;
-      let month = bonusStats[m] || 0;
-      document.getElementById(
-        "hocThemStats"
-      ).innerHTML = `📊 Điểm học thêm tuần này: ${week} | tháng này: ${month}`;
-    }
-
-    function getWeekNumber(d) {
-      d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-      d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
-      let yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-      return Math.ceil((((d - yearStart) / 86400000 + 1) / 7));
-    }
-
-    function renderCalendar() {
-      const tbody = document.getElementById("calendarBody");
-      tbody.innerHTML = "";
-      const days = Object.keys(done).sort().reverse();
-      days.forEach((day) => {
-        const row = document.createElement("tr");
-        const noteVal = notes[day] || "";
-        row.innerHTML = `<td>${day}</td><td>${Object.keys(
-          done[day]
-        ).join(", ")}</td><td><textarea onchange="saveNote('${day}', this.value)">${noteVal}</textarea></td>`;
-        tbody.appendChild(row);
-      });
-    }
-
-    function renderMissedTasks() {
-      const container = document.getElementById("missedTasksList");
-      container.innerHTML = "<h3>🔄 Nhiệm vụ chưa làm (có thể làm bù)</h3>";
-      let html = "";
-      for (let i in localStorage) {
-        if (i.startsWith("missedTasks_")) {
-          const day = i.replace("missedTasks_", "");
-          const tasks = JSON.parse(localStorage.getItem(i));
-          html += `<div><b>${day}</b>: ${tasks.join(
-            ", "
-          )} <button onclick="lamBu('${day}')">Làm bù</button></div>`;
-        }
-      }
-      container.innerHTML += html;
-    }
-
-    function lamBu(day) {
-      const key = "missedTasks_" + day;
-      const missedTasks = JSON.parse(localStorage.getItem(key));
-      if (!missedTasks) return;
-      let added = 0;
-      missedTasks.forEach((task) => {
-        added += task === "on" ? 20 : 5;
-        done[day] = done[day] || {};
-        done[day][task] = true;
-      });
-      diem += added;
-      localStorage.removeItem(key);
-      localStorage.setItem("diem", diem);
-      localStorage.setItem("done", JSON.stringify(done));
-      alert(`Đã làm bù ${missedTasks.length} nhiệm vụ ngày ${day} (+${added} điểm)`);
-      updateScoreDisplay();
-      renderCalendar();
-    }
-
-    function saveNote(day, value) {
-      notes[day] = value;
-      localStorage.setItem("notes", JSON.stringify(notes));
-    }
-
-    function xoaLichHomNay() {
-      if (confirm("Xóa tất cả nhiệm vụ hôm nay?")) {
-        if (done[today]) {
-          let lost = 0;
-          Object.keys(done[today]).forEach((task) => {
-            lost += task === "on" ? 20 : 5;
-          });
-          diem = Math.max(0, diem - lost);
-          delete done[today];
-          localStorage.setItem("diem", diem);
-          localStorage.setItem("done", JSON.stringify(done));
-          alert("Đã xóa nhiệm vụ hôm nay và trừ điểm tương ứng.");
-          updateScoreDisplay();
-          renderCalendar();
-        }
-      }
-    }
-
-    function xoaGhiChuHomNay() {
-      if (confirm("Xóa ghi chú hôm nay?")) {
-        if (notes[today]) {
-          delete notes[today];
-          localStorage.setItem("notes", JSON.stringify(notes));
-          alert("Đã xóa ghi chú hôm nay.");
-          renderCalendar();
-        }
-      }
-    }
-
-    function setReminder() {
-      const time = document.getElementById("reminderTime").value;
-      if (!time) return alert("Hãy chọn giờ!");
-      localStorage.setItem("reminderTime", time);
-      alert("Đã lưu giờ nhắc học: " + time);
-    }
-
-    function startReminderCheck() {
-      if (!("Notification" in window)) return;
-      Notification.requestPermission();
-      setInterval(() => {
-        const t = localStorage.getItem("reminderTime");
-        if (!t) return;
-        const now = new Date();
-        const nowStr =
-          now.getHours().toString().padStart(2, "0") +
-          ":" +
-          now.getMinutes().toString().padStart(2, "0");
-        if (nowStr === t && lastNotification !== today) {
-          new Notification("⏰ Đến giờ học rồi! Hãy hoàn thành mục tiêu hôm nay nhé.");
-          localStorage.setItem("lastNotification", today);
-        }
-      }, 60000);
-    }
-
-    function updateTimerDisplay() {
-      let hours = String(Math.floor(elapsedSeconds / 3600)).padStart(2, "0");
-      let minutes = String(Math.floor((elapsedSeconds % 3600) / 60)).padStart(2, "0");
-      let seconds = String(elapsedSeconds % 60).padStart(2, "0");
-      document.getElementById("timer").textContent = `${hours}:${minutes}:${seconds}`;
-    }
-
-    function startTimer() {
-      if (!running) {
-        running = true;
-        localStorage.setItem("timerRunning", "true");
-        timerInterval = setInterval(() => {
-          elapsedSeconds++;
-          localStorage.setItem("elapsedSeconds", elapsedSeconds);
-          updateTimerDisplay();
-        }, 1000);
-      }
-    }
-
-    function stopTimer() {
-      if (running) {
-        running = false;
-        localStorage.setItem("timerRunning", "false");
-        clearInterval(timerInterval);
-        localStorage.setItem("elapsedSeconds", elapsedSeconds);
-      }
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      updateScoreDisplay();
-      updateTimerDisplay();
-      renderCalendar();
-      startReminderCheck();
-      document.getElementById("dailyQuote").innerText = quotes[new Date().getDate() % quotes.length];
-      if (checkinStart !== 0) {
-        startCountdown();
-      }
-      if (running) {
-        startTimer();
-      }
-    });
-  </script>
-</body>
-</html>
+        // Generate QR Code
+        function generateQRCode() {
+            const studentID = document.getElementById('studentID').value;
+            const canvas = document.getElementById('qrCanvas');
+            const ctx = canvas.get
